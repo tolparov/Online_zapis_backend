@@ -37,10 +37,8 @@ public class AuthController {
 		try {
 			UserResponseDto user = userService.login(userLoginRequestDto);
 
-			// Создание сессии
 			Session session = sessionRepository.createSession();
 			session.setAttribute("userId", user.getId());
-			// Создание и сохранение куки в Redis
 			securityConfig.addCookie(request, response, "sessionId", session.getId());
 
 			return ResponseEntity.ok(user);
