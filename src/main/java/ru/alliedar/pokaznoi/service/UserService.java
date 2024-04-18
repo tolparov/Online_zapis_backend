@@ -10,7 +10,7 @@ public interface UserService {
 
     User update(User user);
 
-    User Create(User user);
+    User create(User user);
 
     boolean isTaskOwner(Long userId, Long taskId);
 
