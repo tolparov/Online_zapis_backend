@@ -57,19 +57,10 @@ public class AuthController {
 
 	}
 
-//	@PostMapping("/changePassword")
-//	public ResponseEntity<String> changePassword(HttpServletRequest request, HttpServletResponse response, UserChangePasswordDto userChangePasswordDto)  {
-//		boolean sessionValid = authServiceSession.checkSessionCookie(request, response);
-//
-//		if (sessionValid && userService.changePassword(userChangePasswordDto)) {
-//			return ResponseEntity.ok("Пароль успешно поменян");
-//		}
-//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
-//	}
 	@PostMapping("/changePassword")
 	public ResponseEntity<String> changePassword(HttpServletRequest request, HttpServletResponse response, @RequestBody UserChangePasswordDto userChangePasswordDto) {
 		try {
-			// Проверяем действительность сессии
+
 			boolean sessionValid = authServiceSession.checkSessionCookie(request, response);
 
 			if (sessionValid) {

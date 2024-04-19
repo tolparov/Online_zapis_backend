@@ -1,8 +1,6 @@
 package ru.alan.viewPerson.service.impl;
 
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -71,7 +69,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 	}
 
-
 	@Override
 	@Transactional
 	public UserResponseDto login(UserLoginRequestDto userLoginRequestDto) {
@@ -90,6 +87,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw new IllegalArgumentException("Пользователь не найден");
 		}
 	}
+
 	@Override
 	@Transactional
 	public boolean resetPassword(UserResetPasswordDto userResetPasswordDto) {
@@ -100,6 +98,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return true;
 		}).orElseThrow(() -> new IllegalArgumentException("Пользователь с почтой " + userResetPasswordDto.getEmail() + " не существует."));
 	}
+
 	@Override
 	@Transactional
 	public boolean changePassword(UserChangePasswordDto userChangePasswordDto) {
@@ -121,7 +120,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			return true;
 		}).orElseThrow(() -> new IllegalArgumentException("User with email " + userEmail + " not found"));
 	}
-
-
 
 }

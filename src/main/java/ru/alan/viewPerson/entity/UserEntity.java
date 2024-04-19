@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "Person")
 @Entity
 public class UserEntity {
+
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
