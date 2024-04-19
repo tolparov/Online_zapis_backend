@@ -15,14 +15,6 @@ import org.springframework.session.SessionRepository;
 
 @Configuration
 public class SecurityConfig {
-	private final SessionRepository sessionRepository;
-	private final StringRedisTemplate stringRedisTemplate;
-
-	public SecurityConfig(SessionRepository sessionRepository, StringRedisTemplate stringRedisTemplate) {
-		this.sessionRepository = sessionRepository;
-		this.stringRedisTemplate = stringRedisTemplate;
-	}
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -42,15 +34,5 @@ public class SecurityConfig {
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-
-	public void addCookie(HttpServletRequest request, HttpServletResponse response, String key, String value) {
-		Cookie cookie = new Cookie(key, value);
-		cookie.setPath("/");
-		response.addCookie(cookie);
-		stringRedisTemplate.opsForValue().set(key, value);
-	}
-
-
 
 }
