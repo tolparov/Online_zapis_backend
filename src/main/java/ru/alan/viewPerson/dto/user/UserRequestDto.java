@@ -25,7 +25,6 @@ public class UserRequestDto implements Serializable {
 			groups = {OnCreate.class, OnUpdate.class})
 	private String login;
 
-
 	@NotBlank(message = "Password must not be null!", groups = {OnCreate.class, OnPasswordUpdate.class})
 	@Length(message = "Password must be at least 8 symbols long!", min = 8,
 			groups = {OnCreate.class, OnPasswordUpdate.class})
