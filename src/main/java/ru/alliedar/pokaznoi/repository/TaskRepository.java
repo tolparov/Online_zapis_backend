@@ -1,12 +1,11 @@
 package ru.alliedar.pokaznoi.repository;
 
-import org.mapstruct.Mapper;
 import ru.alliedar.pokaznoi.domain.task.Task;
 
 import java.util.List;
 import java.util.Optional;
 
-//@Mapper
+
 public interface TaskRepository {
 
     Optional<Task> findById(Long id);

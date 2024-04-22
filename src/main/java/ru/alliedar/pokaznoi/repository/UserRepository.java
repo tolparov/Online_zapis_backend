@@ -1,12 +1,11 @@
 package ru.alliedar.pokaznoi.repository;
 
-import org.mapstruct.Mapper;
 import ru.alliedar.pokaznoi.domain.user.Role;
 import ru.alliedar.pokaznoi.domain.user.User;
 
 import java.util.Optional;
 
-//@Mapper
+
 public interface UserRepository {
 
     Optional<User> findById(Long id);

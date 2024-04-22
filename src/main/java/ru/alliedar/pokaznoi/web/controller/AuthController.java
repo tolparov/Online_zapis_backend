@@ -1,5 +1,6 @@
 package ru.alliedar.pokaznoi.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import ru.alliedar.pokaznoi.web.mappers.UserMapper;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Auth Controller", description = "Auth API") // для сваггера
 public class AuthController {
 
     private final AuthService authService;
