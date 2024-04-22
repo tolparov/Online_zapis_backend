@@ -1,14 +1,16 @@
 package ru.alliedar.pokaznoi.service.impl;
 
+import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
+import ru.alliedar.pokaznoi.domain.user.Role;
+import ru.alliedar.pokaznoi.domain.user.User;
+import ru.alliedar.pokaznoi.repository.UserRepository;
+import ru.alliedar.pokaznoi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
-import ru.alliedar.pokaznoi.domain.user.User;
-import ru.alliedar.pokaznoi.repository.UserRepository;
-import ru.alliedar.pokaznoi.service.UserService;
 
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -18,17 +20,17 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public User getByUsername(String username) {
-        return userRepository.findByUserName(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     @Override
@@ -42,20 +44,22 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(User user) {
-        if (userRepository.findByUserName(user.getUsername()).isPresent()) {
-            throw new IllegalStateException("User already exist");
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalStateException("User already exists.");
         }
         if (!user.getPassword().equals(user.getPasswordConfirmation())) {
             throw new IllegalStateException("Password and password confirmation do not match.");
         }
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.create(user);
-        userRepository.findById(user.getId());
-        return null;
+        Set<Role> roles = Set.of(Role.ROLE_USER);
+        userRepository.insertUserRole(user.getId(), Role.ROLE_USER);
+        user.setRoles(roles);
+        return user;
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean isTaskOwner(Long userId, Long taskId) {
         return userRepository.isTaskOwner(userId, taskId);
     }
@@ -65,4 +69,5 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         userRepository.delete(id);
     }
+
 }

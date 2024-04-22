@@ -1,6 +1,8 @@
 package ru.alliedar.pokaznoi.domain.user;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import ru.alliedar.pokaznoi.domain.task.Task;
 
 import java.util.Set;
