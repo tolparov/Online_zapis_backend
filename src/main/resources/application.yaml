@@ -8,7 +8,7 @@ spring:
     init:
       mode: never
       continue-on-error: false
-#      data-locations: classpath:demo_data.sql
+#      data-locations: classpath:db-init/initdb.sql
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
