@@ -7,7 +7,6 @@ import ru.alan.viewPerson.dto.user.UserResponseDto;
 import ru.alan.viewPerson.entity.Role;
 import ru.alan.viewPerson.entity.UserEntity;
 
-import java.util.Set;
 
 @Component
 public class UserMapper {

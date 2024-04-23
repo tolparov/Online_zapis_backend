@@ -4,26 +4,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
 import org.springframework.web.bind.annotation.*;
-import ru.alan.viewPerson.config.SecurityConfig;
-import ru.alan.viewPerson.dto.user.UserLoginRequestDto;
-import ru.alan.viewPerson.dto.user.UserRequestDto;
-import ru.alan.viewPerson.dto.user.UserResponseDto;
+import ru.alan.viewPerson.dto.user.*;
+import ru.alan.viewPerson.service.AuthServiceSession;
 import ru.alan.viewPerson.service.UserService;
 
 @RestController
 @RequestMapping
+@CrossOrigin
 public class AuthController {
 	private final UserService userService;
-	private final SecurityConfig securityConfig;
-	private final SessionRepository sessionRepository;
+	private final AuthServiceSession authServiceSession;
 
-	public AuthController(UserService userService, SecurityConfig securityConfig, SessionRepository sessionRepository) {
+	public AuthController(UserService userService, AuthServiceSession authServiceSession) {
 		this.userService = userService;
-		this.securityConfig = securityConfig;
-		this.sessionRepository = sessionRepository;
+		this.authServiceSession = authServiceSession;
 	}
 
 	@PostMapping("/register")
@@ -36,19 +31,51 @@ public class AuthController {
 	public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserLoginRequestDto userLoginRequestDto, HttpServletResponse response, HttpServletRequest request) {
 		try {
 			UserResponseDto user = userService.login(userLoginRequestDto);
-
-			// Создание сессии
-			Session session = sessionRepository.createSession();
-			session.setAttribute("userId", user.getId());
-			// Создание и сохранение куки в Redis
-			securityConfig.addCookie(request, response, "sessionId", session.getId());
-
+			authServiceSession.createAndSetSessionCookie(request, response, user.getId());
 			return ResponseEntity.ok(user);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
+	@PostMapping("/logout")
+	public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+		boolean sessionValid = authServiceSession.checkSessionCookie(request, response);
+
+		if (sessionValid) {
+			return ResponseEntity.ok("Выход успешен");
+		}
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Незарегистророван");
+	}
+
+	@PostMapping("/resetPassword")
+	public ResponseEntity<String> resetPassword(@RequestBody UserResetPasswordDto userResetPasswordDto) {
+		if (userService.resetPassword(userResetPasswordDto)) {
+			return ResponseEntity.ok("Пароль успешно сброшен");
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+
+	}
+
+	@PostMapping("/changePassword")
+	public ResponseEntity<String> changePassword(HttpServletRequest request, HttpServletResponse response, @RequestBody UserChangePasswordDto userChangePasswordDto) {
+		try {
+
+			boolean sessionValid = authServiceSession.checkSessionCookie(request, response);
+
+			if (sessionValid) {
+				if (userService.changePassword(userChangePasswordDto)) {
+					return ResponseEntity.ok("Пароль успешно изменен");
+				} else {
+					return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+				}
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительная сессия");
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при изменении пароля: " + e.getMessage());
+		}
+	}
 
 }
 

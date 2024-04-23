@@ -4,6 +4,7 @@ import ru.alan.viewPerson.dto.validation.OnCreate;
 import ru.alan.viewPerson.dto.validation.OnPasswordUpdate;
 import ru.alan.viewPerson.dto.validation.OnUpdate;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -23,7 +24,6 @@ public class UserRequestDto implements Serializable {
 	@Length(message = "Firstname must be less than 255 symbols long!", max = 255,
 			groups = {OnCreate.class, OnUpdate.class})
 	private String login;
-
 
 	@NotBlank(message = "Password must not be null!", groups = {OnCreate.class, OnPasswordUpdate.class})
 	@Length(message = "Password must be at least 8 symbols long!", min = 8,
@@ -46,6 +46,10 @@ public class UserRequestDto implements Serializable {
 		this.login = login;
 		this.password = password;
 		this.passwordConfirmation = passwordConfirmation;
+	}
+	@AssertTrue(message = "Password and confirmation must match!", groups = {OnCreate.class, OnPasswordUpdate.class})
+	public boolean isPasswordConfirmed() {
+		return password != null && password.equals(passwordConfirmation);
 	}
 
 	public Long getId() {
