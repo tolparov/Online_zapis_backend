@@ -1,30 +1,27 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
   cache:
     type: redis
     cache-names: redis-cache
   data:
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
-      password: ZXJ0ZWRydHlldGVh
+      password: ${REDIS_PASSWORD}
   datasource:
-    url: jdbc:postgresql://localhost:5432/tasklist?currentSchema=tasklist
-    username: postgres
-    password: 537915
+    url: jdbc:postgresql://${HOST}:5432/${POSTGRES_DATABASE}?currentSchema=${POSTGRES_SCHEMA}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
-  sql:
-    init:
-      mode: never
-      continue-on-error: false
-#      data-locations: classpath:db-init/initdb.sql
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
     default-schema: tasklist
 security:
   jwt:
-    secret: YXNkZmdoamtkYXNkZ2ZoZmRoZGZnc2RmZ2Rm
-    access: 36000000
-    refresh: 2592000000
+    secret: ${JWT_SECRET}
+    access: 360000
+    refresh: 180000000
 springdoc:
   override-with-generic-response: false #убирает сообщения об ошибках в сваггере
