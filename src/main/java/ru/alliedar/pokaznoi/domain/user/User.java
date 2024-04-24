@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.alliedar.pokaznoi.domain.task.Task;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.List;
 
 @Data
-public class User {
+public class User implements Serializable {
 
     private Long id;
     private String name;
