@@ -1,9 +1,6 @@
 package ru.alliedar.pokaznoi.web.controller;
 
-import ru.alliedar.pokaznoi.domain.exception.AccessDeniedException;
-import ru.alliedar.pokaznoi.domain.exception.ExceptionBody;
-import ru.alliedar.pokaznoi.domain.exception.ResourceMappingException;
-import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
+import ru.alliedar.pokaznoi.domain.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -69,6 +66,12 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleAuthentication(AuthenticationException e) {
         return new ExceptionBody("Authentication failed.");
+    }
+
+    @ExceptionHandler(ImageUploadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionBody handleImageUpload(ImageUploadException e) {
+        return new ExceptionBody(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

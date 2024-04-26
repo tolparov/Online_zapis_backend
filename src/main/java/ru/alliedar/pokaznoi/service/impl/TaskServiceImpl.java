@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
 import ru.alliedar.pokaznoi.domain.task.Status;
 import ru.alliedar.pokaznoi.domain.task.Task;
+import ru.alliedar.pokaznoi.domain.task.TaskImage;
 import ru.alliedar.pokaznoi.domain.user.User;
 import ru.alliedar.pokaznoi.repository.TaskRepository;
+import ru.alliedar.pokaznoi.service.ImageService;
 import ru.alliedar.pokaznoi.service.TaskService;
 import ru.alliedar.pokaznoi.service.UserService;
 
@@ -22,6 +24,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final ImageService imageService;
 
     @Override
     @Transactional
@@ -64,5 +67,15 @@ public class TaskServiceImpl implements TaskService {
     @CacheEvict(value = "TaskService::getById", key = "#id")
     public void delete(Long id) {
         taskRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    @CacheEvict(value = "TaskService::getById", key = "#id")
+    public void uploadImage(Long id, TaskImage image) {
+        Task task = getById(id);
+        String fileName = imageService.upload(image);
+        task.getImages().add(fileName);
+        taskRepository.save(task);
     }
 }

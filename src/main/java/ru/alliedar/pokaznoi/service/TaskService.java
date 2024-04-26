@@ -1,6 +1,7 @@
 package ru.alliedar.pokaznoi.service;
 
 import ru.alliedar.pokaznoi.domain.task.Task;
+import ru.alliedar.pokaznoi.domain.task.TaskImage;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface TaskService {
 
     void delete(Long id);
 
+    void uploadImage(Long id, TaskImage image);
 }

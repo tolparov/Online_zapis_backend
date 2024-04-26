@@ -1,5 +1,6 @@
 package ru.alliedar.pokaznoi.config;
 
+import io.minio.MinioClient;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.alliedar.pokaznoi.service.props.MinioProperties;
 import ru.alliedar.pokaznoi.web.security.JwtTokenFilter;
 import ru.alliedar.pokaznoi.web.security.JwtTokenProvider;
 import ru.alliedar.pokaznoi.web.security.expression.CustomSecurityExceptionHandler;
@@ -38,6 +40,7 @@ public class ApplicationConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationContext applicationContext;
+    private final MinioProperties minioProperties;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -54,6 +57,14 @@ public class ApplicationConfig {
         DefaultMethodSecurityExpressionHandler expressionHandler = new CustomSecurityExceptionHandler();
         expressionHandler.setApplicationContext(applicationContext);
         return expressionHandler;
+    }
+
+    @Bean
+    public MinioClient minioClient() {
+        return MinioClient.builder()
+                .endpoint(minioProperties.getUrl())
+                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                .build();
     }
 
     @Bean

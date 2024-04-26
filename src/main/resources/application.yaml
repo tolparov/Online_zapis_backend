@@ -26,3 +26,9 @@ security:
     refresh: 30
 springdoc:
   override-with-generic-response: false #убирает сообщения об ошибках в сваггере
+
+minio:
+  bucket: ${MINIO_BUCKET}
+  url: ${MINIO_URL}
+  accessKey: ${MINIO_ACCESS_KEY}
+  secretKey: ${MINIO_SECRET_KEY}
