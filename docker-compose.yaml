@@ -15,12 +15,12 @@ services:
       - db
       - redis
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/tasklist?currentSchema=tasklist
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=537915
-      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://${HOST}:5432/${POSTGRES_DATABASE}?currentSchema=${POSTGRES_SCHEMA}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATA_REDIS_HOST=${REDIS_HOST}
       - SPRING_DATA_REDIS_PORT=6379
-      - SPRING_DATA_REDIS_PASSWORD=ZXJ0ZWRydHlldGVh
+      - SPRING_DATA_REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - '8080:8080'
 
@@ -29,9 +29,9 @@ services:
     image: postgres:15.1-alpine
     container_name: postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=537915
-      - POSTGRES_DB=tasklist
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE}
     ports:
       - '5432:5432'
     volumes:
@@ -44,6 +44,6 @@ services:
     container_name: redis
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass ZXJ0ZWRydHlldGVh
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     volumes:
       - cache:/data

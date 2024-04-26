@@ -1,6 +1,6 @@
 spring:
-  # config:
-    # import: optional:file:.env[.properties]
+  config:
+    import: optional:file:.env.example[.properties]
   cache:
     type: redis
     cache-names: redis-cache
@@ -8,19 +8,20 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: ZXJ0ZWRydHlldGVh
+      password: ${REDIS_PASSWORD}
   datasource:
-    url: jdbc:postgresql://localhost:5432/tasklist?currentSchema=tasklist
-    username: postgres
-    password: 537915
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DATABASE}?currentSchema=${POSTGRES_SCHEMA}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
-    default-schema: tasklist
+    default-schema: ${POSTGRES_SCHEMA}
+
 security:
   jwt:
-    secret: YXNkZmdoamtkYXNkZ2ZoZmRoZGZnc2RmZ2Rm
+    secret: ${JWT_SECRET}
     access: 1
     refresh: 30
 springdoc:
