@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
 import ru.alliedar.pokaznoi.domain.task.Status;
 import ru.alliedar.pokaznoi.domain.task.Task;
+import ru.alliedar.pokaznoi.domain.user.User;
 import ru.alliedar.pokaznoi.repository.TaskRepository;
 import ru.alliedar.pokaznoi.service.TaskService;
+import ru.alliedar.pokaznoi.service.UserService;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -41,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
         if (task.getStatus() == null) {
             task.setStatus(Status.TODO);
         }
-        taskRepository.update(task);
+        taskRepository.save(task);
         return task;
     }
 
@@ -49,9 +52,10 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @Cacheable(value = "TaskService::getById", key = "#task.id")
     public Task create(Task task, Long userId) {
+        User user = userService.getById(userId);
         task.setStatus(Status.TODO);
-        taskRepository.create(task);
-        taskRepository.assignToUserById(task.getId(), userId);
+        user.getTasks().add(task);
+        userService.update(user);
         return task;
     }
 
@@ -59,6 +63,6 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     @CacheEvict(value = "TaskService::getById", key = "#id")
     public void delete(Long id) {
-        taskRepository.delete(id);
+        taskRepository.deleteById(id);
     }
 }

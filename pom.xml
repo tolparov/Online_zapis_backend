@@ -26,6 +26,7 @@
         <jjwt.version>0.11.5</jjwt.version><!-- 0.11.5-->
         <liquibase.version>4.19.0</liquibase.version>
         <springdoc.version>2.0.2</springdoc.version>
+        <preliquibase.version>1.3.0</preliquibase.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,11 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.lbruun.springboot</groupId>
+            <artifactId>preliquibase-spring-boot-starter</artifactId>
+            <version>${preliquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
