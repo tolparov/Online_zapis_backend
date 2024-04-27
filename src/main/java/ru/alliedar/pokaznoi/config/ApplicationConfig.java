@@ -27,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.alliedar.pokaznoi.service.props.MinioProperties;
-import ru.alliedar.pokaznoi.web.security.expression.CustomSecurityExceptionHandler;
 import ru.alliedar.pokaznoi.web.security.CookieAuthFilter;
 
 @Configuration
@@ -52,12 +51,12 @@ public class ApplicationConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean // для втрого способа кастомных секьюрити экспешенов
-    public MethodSecurityExpressionHandler expressionHandler() {
-        DefaultMethodSecurityExpressionHandler expressionHandler = new CustomSecurityExceptionHandler();
-        expressionHandler.setApplicationContext(applicationContext);
-        return expressionHandler;
-    }
+//    @Bean // для втрого способа кастомных секьюрити экспешенов
+//    public MethodSecurityExpressionHandler expressionHandler() {
+//        DefaultMethodSecurityExpressionHandler expressionHandler = new CustomSecurityExceptionHandler();
+//        expressionHandler.setApplicationContext(applicationContext);
+//        return expressionHandler;
+//    }
 
     @Bean
     public MinioClient minioClient() {

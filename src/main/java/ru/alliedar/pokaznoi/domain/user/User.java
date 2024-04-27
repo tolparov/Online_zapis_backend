@@ -27,10 +27,10 @@ public class User implements Serializable {
     private String passwordConfirmation;
 
     @Column(name = "role")
-//    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "users_roles")
     @Enumerated(value = EnumType.STRING)
-    private Role role;
+    private Set<Role> roles;
 
     @CollectionTable(name = "users_task")
     @OneToMany

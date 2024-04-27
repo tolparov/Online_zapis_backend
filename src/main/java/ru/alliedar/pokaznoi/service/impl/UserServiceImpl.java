@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("Password and password confirmation do not match.");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Set<Role> roles = Set.of(Role.USER);
+        Set<Role> roles = Set.of(Role.ROLE_USER);
         user.setRoles(roles);
         userRepository.save(user);
         return user;
