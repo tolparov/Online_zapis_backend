@@ -1,6 +1,5 @@
 package ru.alliedar.pokaznoi.web.controller;
 
-import ru.alliedar.pokaznoi.domain.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.alliedar.pokaznoi.domain.exception.*;
 
 import java.util.List;
 import java.util.stream.Collectors;

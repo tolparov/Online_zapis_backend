@@ -1,18 +1,20 @@
 package ru.alliedar.pokaznoi.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.alliedar.pokaznoi.domain.user.User;
+import ru.alliedar.pokaznoi.repository.UserRepository;
 import ru.alliedar.pokaznoi.service.AuthService;
 import ru.alliedar.pokaznoi.service.UserService;
-import ru.alliedar.pokaznoi.web.dto.auth.*;
+import ru.alliedar.pokaznoi.web.dto.auth.UserChangePasswordDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserLoginRequestDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserResetPasswordDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserResponseDto;
 import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
-import ru.alliedar.pokaznoi.repository.UserRepository;
+
 import java.util.Optional;
 
 @Service
@@ -28,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UserResponseDto login(UserLoginRequestDto userLoginRequestDto) {
+    public UserResponseDto login(final UserLoginRequestDto userLoginRequestDto) {
         String email = userLoginRequestDto.getEmail();
         String password = userLoginRequestDto.getPassword();
 
@@ -47,13 +49,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public boolean resetPassword(UserResetPasswordDto userResetPasswordDto) {
-        Optional<User> userOptional = userRepository.findByUsername(userResetPasswordDto.getEmail());
+    public boolean resetPassword(
+            final UserResetPasswordDto userResetPasswordDto) {
+        Optional<User> userOptional = userRepository
+                .findByUsername(userResetPasswordDto.getEmail());
         return userOptional.map(user -> {
-            user.setPassword(passwordEncoder.encode(userResetPasswordDto.getNewPassword()));
+            user.setPassword(passwordEncoder.encode(userResetPasswordDto
+                    .getNewPassword()));
             userRepository.save(user);
             return true;
-        }).orElseThrow(() -> new IllegalArgumentException("Пользователь с почтой " + userResetPasswordDto.getEmail() + " не существует."));
+        }).orElseThrow(() -> new IllegalArgumentException(
+                "Пользователь с почтой " + userResetPasswordDto.getEmail() +
+                        " не существует."));
     }
 
     @Override
@@ -69,13 +76,15 @@ public class AuthServiceImpl implements AuthService {
                 throw new IllegalArgumentException("Incorrect current password");
             }
             if (oldPassword.equals(newPassword)) {
-                throw new IllegalArgumentException("New password must be different from the old one");
+                throw new IllegalArgumentException(
+                        "New password must be different from the old one");
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             return true;
-        }).orElseThrow(() -> new IllegalArgumentException("User with email " + userEmail + " not found"));
+        }).orElseThrow(() -> new IllegalArgumentException("User with email " +
+                userEmail + " not found"));
     }
 
 

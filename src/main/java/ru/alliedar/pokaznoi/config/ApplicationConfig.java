@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -47,13 +44,15 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(
+            final AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
 //    @Bean // для втрого способа кастомных секьюрити экспешенов
 //    public MethodSecurityExpressionHandler expressionHandler() {
-//        DefaultMethodSecurityExpressionHandler expressionHandler = new CustomSecurityExceptionHandler();
+//        DefaultMethodSecurityExpressionHandler expressionHandler =
+//                                         new CustomSecurityExceptionHandler();
 //        expressionHandler.setApplicationContext(applicationContext);
 //        return expressionHandler;
 //    }
@@ -62,17 +61,20 @@ public class ApplicationConfig {
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(minioProperties.getUrl())
-                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                .credentials(minioProperties.getAccessKey(),
+                        minioProperties.getSecretKey())
                 .build();
     }
 
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("bearerAuth"))
                 .components(
                         new Components()
-                                .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .addSecuritySchemes(
+                                        "bearerAuth", new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
@@ -86,7 +88,8 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(final HttpSecurity http)
+            throws Exception {
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
@@ -99,10 +102,13 @@ public class ApplicationConfig {
                 )
                 .authorizeHttpRequests((authz) ->
                         authz
-                                .requestMatchers("/auth/register", "/auth/login", "/auth/resetPassword").permitAll()
+                                .requestMatchers("/auth/register",
+                                        "/auth/login", "/auth/resetPassword")
+                                .permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(new CookieAuthFilter(stringRedisTemplate), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CookieAuthFilter(stringRedisTemplate),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
