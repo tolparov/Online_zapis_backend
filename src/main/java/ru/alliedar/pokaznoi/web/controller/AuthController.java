@@ -71,12 +71,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@CookieValue(name = "sessionId") String sessionId) {
+    public ResponseEntity<?> logoutUser(@CookieValue(name = "sessionId") String sessionId, HttpServletResponse response) {
         Boolean exists = stringRedisTemplate.hasKey(sessionId);
 
         if (exists != null && exists) {
             stringRedisTemplate.delete(sessionId);
-            return ResponseEntity.ok(HttpStatus.OK);
+            return ResponseEntity.ok(HttpStatus.OK);// TODO удалят куки
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

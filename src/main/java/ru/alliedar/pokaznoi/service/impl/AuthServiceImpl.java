@@ -25,22 +25,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
 
-    @Override
-    @Transactional
-    public UserResponseDto create(UserRequestDto userRequestDto) {
-        try {
-            Optional<User> userOptional = userRepository.findByUsername(userRequestDto.getLogin());
-            if (userOptional.isPresent()) {
-                throw new IllegalArgumentException("Пользователь с логином "
-                        + userRequestDto.getLogin() + " уже существует.");
-            }
-            User user = userRepository.save(userAuthMapper.mapToEntity(userRequestDto));
-            return userAuthMapper.mapToDTO(user);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Пользователь с адресом электронной почты "
-                    + userRequestDto.getEmail() + " уже существует.");
-        }
-    }
 
     @Override
     @Transactional
