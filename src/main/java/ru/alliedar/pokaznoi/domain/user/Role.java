@@ -1,7 +1,12 @@
 package ru.alliedar.pokaznoi.domain.user;
 
-public enum Role {
+import org.springframework.security.core.GrantedAuthority;
 
-    ROLE_USER, ROLE_ADMIN
+public enum Role implements GrantedAuthority {
+    USER, ADMIN;
 
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

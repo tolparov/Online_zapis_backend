@@ -1,11 +1,13 @@
 package ru.alliedar.pokaznoi.service;
 
-import ru.alliedar.pokaznoi.web.dto.auth.JwtRequest;
-import ru.alliedar.pokaznoi.web.dto.auth.JwtResponse;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
+import ru.alliedar.pokaznoi.web.dto.auth.*;
 
 public interface AuthService {
 
-    JwtResponse login (JwtRequest loginRequest);
-
-    JwtResponse refresh(String refreshToken);
+    UserResponseDto create(UserRequestDto userRequestDto);
+    UserResponseDto login(UserLoginRequestDto userLoginRequestDto);
+    boolean resetPassword(UserResetPasswordDto userResetPasswordDto);
+    boolean changePassword(UserChangePasswordDto userChangePasswordDto);
 }

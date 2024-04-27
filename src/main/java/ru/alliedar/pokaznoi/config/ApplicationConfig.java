@@ -11,34 +11,34 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.alliedar.pokaznoi.service.props.MinioProperties;
-import ru.alliedar.pokaznoi.web.security.JwtTokenFilter;
-import ru.alliedar.pokaznoi.web.security.JwtTokenProvider;
 import ru.alliedar.pokaznoi.web.security.expression.CustomSecurityExceptionHandler;
+import ru.alliedar.pokaznoi.web.security.CookieAuthFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 // @EnableMethodSecurity //для работы кастомных секьюрити эксепшенов
-@RequiredArgsConstructor(onConstructor = @__(@Lazy))
+//@RequiredArgsConstructor(onConstructor = @__(@Lazy))
+@RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final StringRedisTemplate stringRedisTemplate;
     private final ApplicationContext applicationContext;
     private final MinioProperties minioProperties;
 
@@ -85,36 +85,26 @@ public class ApplicationConfig {
                         .version("1.0")
                 );
     }
-    
 
     @Bean
-    public SecurityFilterChain filerChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf().disable()
-                .cors()
-                .and()
-                .httpBasic().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.getWriter().write("Unauthorized");
-                })
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(HttpStatus.FORBIDDEN.value());
-                    response.getWriter().write("Unauthorized");
-                })
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll() // Доступ к сваггеру для всех
-                .requestMatchers("/v3/api-docs/**").permitAll() // Тоже для сваггера
-                .anyRequest().authenticated()
-                .and()
-                .anonymous().disable()
-                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-        return httpSecurity.build();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement ->
+                        sessionManagement
+                                .sessionCreationPolicy(
+                                        SessionCreationPolicy.STATELESS
+                                )
+                )
+                .authorizeHttpRequests((authz) ->
+                        authz
+                                .requestMatchers("/auth/register", "/auth/login", "/auth/resetPassword").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .addFilterBefore(new CookieAuthFilter(stringRedisTemplate), UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
+
 }

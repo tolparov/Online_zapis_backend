@@ -1,47 +1,96 @@
 package ru.alliedar.pokaznoi.web.controller;
-
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.alliedar.pokaznoi.domain.user.User;
 import ru.alliedar.pokaznoi.service.AuthService;
 import ru.alliedar.pokaznoi.service.UserService;
-import ru.alliedar.pokaznoi.web.dto.auth.JwtRequest;
-import ru.alliedar.pokaznoi.web.dto.auth.JwtResponse;
-import ru.alliedar.pokaznoi.web.dto.user.UserDto;
-import ru.alliedar.pokaznoi.web.dto.validation.OnCreate;
-import ru.alliedar.pokaznoi.web.mappers.UserMapper;
+import ru.alliedar.pokaznoi.web.dto.auth.*;
+import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
+
+
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
-@Validated
-@Tag(name = "Auth Controller", description = "Auth API") // для сваггера
 public class AuthController {
 
     private final AuthService authService;
     private final UserService userService;
-    private final UserMapper userMapper;
-
-    @PostMapping("/login")
-    public JwtResponse login(@Validated @RequestBody JwtRequest loginRequest) {
-        return authService.login(loginRequest);
-    }
+    private final StringRedisTemplate stringRedisTemplate;
+    private final UserAuthMapper userAuthMapper;
 
     @PostMapping("/register")
-    public UserDto register(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
-        User user = userMapper.toEntity(userDto);
-        User createdUser = userService.create(user);
-        return userMapper.toDto(createdUser);
+    public ResponseEntity<User> registerUser(@RequestBody UserRequestDto userRequestDto) {
+        User user = userAuthMapper.mapToEntity(userRequestDto);
+        User newUser = userService.create(user);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED); // TODO GAVNO YBRAT
     }
 
-    @PostMapping("/refresh")
-    public JwtResponse refresh (@RequestBody String refreshToken) {
-        return authService.refresh(refreshToken);
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserLoginRequestDto userLoginRequestDto, HttpServletResponse response, HttpServletRequest request) {
+        try {
+            UserResponseDto user = authService.login(userLoginRequestDto);
+            String key = UUID.randomUUID().toString();
+
+            stringRedisTemplate.opsForValue().set(key, String.valueOf(user.getId()));
+
+            Cookie cookie = new Cookie("sessionId", key);
+            cookie.setPath("/");
+            cookie.setMaxAge(15 * 24 * 60 * 60);
+            response.addCookie(cookie);
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(@CookieValue(name = "sessionId") String sessionId) {
+        Boolean exists = stringRedisTemplate.hasKey(sessionId);
+
+        if (exists != null && exists) {
+            stringRedisTemplate.delete(sessionId);
+            return ResponseEntity.ok(HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestBody UserResetPasswordDto userResetPasswordDto) {
+        if (authService.resetPassword(userResetPasswordDto)) {
+            return ResponseEntity.ok("Пароль успешно сброшен");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@CookieValue(name = "sessionId") String sessionId,
+                                                 HttpServletRequest request, HttpServletResponse response,
+                                                 @RequestBody UserChangePasswordDto userChangePasswordDto) {
+        try {
+            Boolean exists = stringRedisTemplate.hasKey(sessionId);
+
+            if (exists != null && exists) {
+                if (authService.changePassword(userChangePasswordDto)) {
+                    return ResponseEntity.ok("Пароль успешно изменен");
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительная сессия");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при изменении пароля: " + e.getMessage());
+        }
+    }
+
 }
