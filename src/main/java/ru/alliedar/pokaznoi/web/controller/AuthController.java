@@ -28,28 +28,34 @@ public class AuthController {
     private final UserMapper userMapper;
 
     //    @PostMapping("/register")
-//    public ResponseEntity<User> registerUser(@RequestBody UserRequestDto userRequestDto) {
+//    public ResponseEntity<User> registerUser(
+//    @RequestBody UserRequestDto userRequestDto) {
 //        System.out.println("RAK");
 //        User user = userAuthMapper.mapToEntity(userRequestDto);
 //        System.out.println("ALFLA");
 //        User newUser = userService.create(user);
 //        System.out.println("KALLL");
-//        return new ResponseEntity<>(newUser, HttpStatus.CREATED); // TODO GAVNO YBRAT
+//        return new ResponseEntity<>(newUser,
+//        HttpStatus.CREATED); // TODO GAVNO YBRAT
 //    }
 //    @PostMapping("/register")
-//    public UserDto register(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
+//    public UserDto register(@Validated(OnCreate.class)
+//    @RequestBody UserDto userDto) {
 //        User user = userMapper.toEntity(userDto);
 //        User createdUser = userService.create(user);
 //        return userMapper.toDto(createdUser);
 //    }
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> registerUser(
+            final @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto newUser = userService.create(userRequestDto);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> loginUser(@RequestBody UserLoginRequestDto userLoginRequestDto, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<UserResponseDto> loginUser(
+            final @RequestBody UserLoginRequestDto userLoginRequestDto,
+            final HttpServletResponse response, final HttpServletRequest request) {
         try {
             UserResponseDto user = authService.login(userLoginRequestDto);
             String key = UUID.randomUUID().toString();
@@ -67,7 +73,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@CookieValue(name = "sessionId") String sessionId, HttpServletResponse response) {
+    public ResponseEntity<?> logoutUser(
+            final @CookieValue(name = "sessionId") String sessionId,
+            final HttpServletResponse response) {
         Boolean exists = stringRedisTemplate.hasKey(sessionId);
 
         if (exists != null && exists) {
@@ -79,18 +87,21 @@ public class AuthController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestBody UserResetPasswordDto userResetPasswordDto) {
+    public ResponseEntity<String> resetPassword(
+            @RequestBody UserResetPasswordDto userResetPasswordDto) {
         if (authService.resetPassword(userResetPasswordDto)) {
             return ResponseEntity.ok("Пароль успешно сброшен");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                "Пользователь с указанным адресом электронной почты не найден");
 
     }
 
     @PostMapping("/changePassword")
-    public ResponseEntity<String> changePassword(@CookieValue(name = "sessionId") String sessionId,
-                                                 HttpServletRequest request, HttpServletResponse response,
-                                                 @RequestBody UserChangePasswordDto userChangePasswordDto) {
+    public ResponseEntity<String> changePassword(
+            final @CookieValue(name = "sessionId") String sessionId,
+            final HttpServletRequest request, final HttpServletResponse response,
+            final @RequestBody UserChangePasswordDto userChangePasswordDto) {
         try {
             Boolean exists = stringRedisTemplate.hasKey(sessionId);
 
@@ -98,13 +109,18 @@ public class AuthController {
                 if (authService.changePassword(userChangePasswordDto)) {
                     return ResponseEntity.ok("Пароль успешно изменен");
                 } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с указанным адресом электронной почты не найден");
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                            "Пользователь с указанным адресом электронной"
+                                    + "почты не найден");
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Недействительная сессия");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        "Недействительная сессия");
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Произошла ошибка при изменении пароля: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Произошла ошибка при изменении пароля: "
+                            + e.getMessage());
         }
     }
 

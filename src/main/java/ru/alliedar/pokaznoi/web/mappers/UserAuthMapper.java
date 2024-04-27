@@ -15,7 +15,7 @@ import java.util.Set;
 public class UserAuthMapper {
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDto mapToDTO(User user) {
+    public UserResponseDto mapToDTO(final User user) {
         UserResponseDto UserResponseDto = new UserResponseDto();
         UserResponseDto.setId(user.getId());
         UserResponseDto.setEmail(user.getUsername());
@@ -24,7 +24,7 @@ public class UserAuthMapper {
         return UserResponseDto;
     }
 
-    public User mapToEntity(UserRequestDto requestDto) {
+    public User mapToEntity(final UserRequestDto requestDto) {
         User user = new User();
         user.setId(requestDto.getId());
         user.setUsername(requestDto.getEmail());

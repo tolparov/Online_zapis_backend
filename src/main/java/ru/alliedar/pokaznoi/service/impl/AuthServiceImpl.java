@@ -30,7 +30,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UserResponseDto login(final UserLoginRequestDto userLoginRequestDto) {
+    public UserResponseDto login(
+            final UserLoginRequestDto userLoginRequestDto) {
         String email = userLoginRequestDto.getEmail();
         String password = userLoginRequestDto.getPassword();
 
@@ -59,13 +60,14 @@ public class AuthServiceImpl implements AuthService {
             userRepository.save(user);
             return true;
         }).orElseThrow(() -> new IllegalArgumentException(
-                "Пользователь с почтой " + userResetPasswordDto.getEmail() +
-                        " не существует."));
+                "Пользователь с почтой " + userResetPasswordDto.getEmail()
+                        + " не существует."));
     }
 
     @Override
     @Transactional
-    public boolean changePassword(UserChangePasswordDto userChangePasswordDto) {
+    public boolean changePassword(
+            final UserChangePasswordDto userChangePasswordDto) {
         String userEmail = userChangePasswordDto.getEmail();
         String oldPassword = userChangePasswordDto.getOldPassword();
         String newPassword = userChangePasswordDto.getNewPassword();
@@ -73,7 +75,8 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> userOptional = userRepository.findByUsername(userEmail);
         return userOptional.map(user -> {
             if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-                throw new IllegalArgumentException("Incorrect current password");
+                throw new IllegalArgumentException(
+                        "Incorrect current password");
             }
             if (oldPassword.equals(newPassword)) {
                 throw new IllegalArgumentException(
@@ -83,8 +86,8 @@ public class AuthServiceImpl implements AuthService {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
             return true;
-        }).orElseThrow(() -> new IllegalArgumentException("User with email " +
-                userEmail + " not found"));
+        }).orElseThrow(() -> new IllegalArgumentException("User with email "
+                + userEmail + " not found"));
     }
 
 

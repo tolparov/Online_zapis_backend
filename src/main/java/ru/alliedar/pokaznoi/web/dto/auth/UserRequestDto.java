@@ -40,7 +40,7 @@ public class UserRequestDto implements Serializable {
     public UserRequestDto() {
     }
 
-    public UserRequestDto(Long id, String email, String login, String password, String passwordConfirmation) {
+    public UserRequestDto(final Long id, final String email, final String login, final String password, final String passwordConfirmation) {
         this.id = id;
         this.email = email;
         this.login = login;
@@ -57,7 +57,7 @@ public class UserRequestDto implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -65,7 +65,7 @@ public class UserRequestDto implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -73,7 +73,7 @@ public class UserRequestDto implements Serializable {
         return login;
     }
 
-    public void setLogin(String login) {
+    public void setLogin(final String login) {
         this.login = login;
     }
 
@@ -81,7 +81,7 @@ public class UserRequestDto implements Serializable {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
@@ -89,7 +89,7 @@ public class UserRequestDto implements Serializable {
         return passwordConfirmation;
     }
 
-    public void setPasswordConfirmation(String passwordConfirmation) {
+    public void setPasswordConfirmation(final String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
     }
 }

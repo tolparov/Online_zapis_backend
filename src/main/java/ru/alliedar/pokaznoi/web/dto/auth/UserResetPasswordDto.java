@@ -18,7 +18,7 @@ public class UserResetPasswordDto {
     public UserResetPasswordDto() {
     }
 
-    public UserResetPasswordDto(String email, String newPassword) {
+    public UserResetPasswordDto(final String email, final String newPassword) {
         this.email = email;
         this.newPassword = newPassword;
     }
@@ -27,7 +27,7 @@ public class UserResetPasswordDto {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -35,7 +35,7 @@ public class UserResetPasswordDto {
         return newPassword;
     }
 
-    public void setNewPassword(String newPassword) {
+    public void setNewPassword(final String newPassword) {
         this.newPassword = newPassword;
     }
 }

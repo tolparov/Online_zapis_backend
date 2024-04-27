@@ -75,9 +75,9 @@ public class ApplicationConfig {
                         new Components()
                                 .addSecuritySchemes(
                                         "bearerAuth", new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
                                 )
                 )
                 .info(new Info()

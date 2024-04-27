@@ -18,7 +18,7 @@ public class UserResponseDto implements Serializable {
     public UserResponseDto() {
     }
 
-    public UserResponseDto(Long id, String email, String login, Role roles) {
+    public UserResponseDto(final Long id, final String email, final String login, final Role roles) {
         this.id = id;
         this.email = email;
         this.login = login;
@@ -29,7 +29,7 @@ public class UserResponseDto implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -37,7 +37,7 @@ public class UserResponseDto implements Serializable {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -45,7 +45,7 @@ public class UserResponseDto implements Serializable {
         return login;
     }
 
-    public void setLogin(String login) {
+    public void setLogin(final String login) {
         this.login = login;
     }
 
@@ -53,7 +53,7 @@ public class UserResponseDto implements Serializable {
         return roles;
     }
 
-    public void setRoles(Role roles) {
+    public void setRoles(final Role roles) {
         this.roles = roles;
     }
 }

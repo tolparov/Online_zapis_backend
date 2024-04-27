@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class CookieAuthProvider {
     private final UserDetailsService userDetailsService;
 
-    public Authentication getAuthentication(String coockieValue) {
+    public Authentication getAuthentication(final String coockieValue) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(coockieValue);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

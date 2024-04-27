@@ -7,7 +7,7 @@ public class UserLoginRequestDto {
     public UserLoginRequestDto() {
     }
 
-    public UserLoginRequestDto(String email, String password) {
+    public UserLoginRequestDto(final String email, final String password) {
         this.email = email;
         this.password = password;
     }
@@ -16,7 +16,7 @@ public class UserLoginRequestDto {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
@@ -24,7 +24,7 @@ public class UserLoginRequestDto {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 }
