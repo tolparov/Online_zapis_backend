@@ -21,7 +21,7 @@
         <lobok.version>1.18.24</lobok.version> <!--1.18.32-->
         <postgresql.version>42.5.1</postgresql.version><!-- 42.7.3-->
         <mapstruct.version>1.5.3.Final</mapstruct.version><!-- 1.5.5.Final-->
-        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version><!-- 8.0.1.Final-->
+        <hibernate-validator.version>8.0.1.Final</hibernate-validator.version><!-- 8.0.1.Final-->
         <jakarta-validation.version>3.0.2</jakarta-validation.version><!--3.0.2 -->
         <jjwt.version>0.11.5</jjwt.version><!-- 0.11.5-->
         <liquibase.version>4.19.0</liquibase.version>

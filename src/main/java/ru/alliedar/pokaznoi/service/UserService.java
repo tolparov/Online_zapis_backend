@@ -1,6 +1,8 @@
 package ru.alliedar.pokaznoi.service;
 
 import ru.alliedar.pokaznoi.domain.user.User;
+import ru.alliedar.pokaznoi.web.dto.auth.UserRequestDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserResponseDto;
 
 public interface UserService {
 
@@ -10,7 +12,7 @@ public interface UserService {
 
     User update(User user);
 
-    User create(User user);
+    UserResponseDto create(UserRequestDto user);
 
     boolean isTaskOwner(Long userId, Long taskId);
 

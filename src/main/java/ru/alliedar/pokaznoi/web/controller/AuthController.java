@@ -6,12 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.alliedar.pokaznoi.domain.user.User;
 import ru.alliedar.pokaznoi.service.AuthService;
 import ru.alliedar.pokaznoi.service.UserService;
 import ru.alliedar.pokaznoi.web.dto.auth.*;
+import ru.alliedar.pokaznoi.web.dto.user.UserDto;
+import ru.alliedar.pokaznoi.web.dto.validation.OnCreate;
 import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
+import ru.alliedar.pokaznoi.web.mappers.UserMapper;
 
 
 import java.util.UUID;
@@ -25,12 +29,27 @@ public class AuthController {
     private final UserService userService;
     private final StringRedisTemplate stringRedisTemplate;
     private final UserAuthMapper userAuthMapper;
+    private final UserMapper userMapper;
 
+//    @PostMapping("/register")
+//    public ResponseEntity<User> registerUser(@RequestBody UserRequestDto userRequestDto) {
+//        System.out.println("RAK");
+//        User user = userAuthMapper.mapToEntity(userRequestDto);
+//        System.out.println("ALFLA");
+//        User newUser = userService.create(user);
+//        System.out.println("KALLL");
+//        return new ResponseEntity<>(newUser, HttpStatus.CREATED); // TODO GAVNO YBRAT
+//    }
+//    @PostMapping("/register")
+//    public UserDto register(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
+//        User user = userMapper.toEntity(userDto);
+//        User createdUser = userService.create(user);
+//        return userMapper.toDto(createdUser);
+//    }
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody UserRequestDto userRequestDto) {
-        User user = userAuthMapper.mapToEntity(userRequestDto);
-        User newUser = userService.create(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED); // TODO GAVNO YBRAT
+    public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto userRequestDto) {
+        UserResponseDto newUser = userService.create(userRequestDto);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
