@@ -8,7 +8,7 @@ public interface Mappable<E, D> {
 
     List<D> toDto(List<E> entity);
 
-    D toDto(E Entity);
+    D toDto(E entity);
 
     List<E> toEntity(List<D> dto);
 }

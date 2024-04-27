@@ -14,33 +14,40 @@ public class UserRequestDto implements Serializable {
 
     private Long id;
 
-    @NotBlank(message = "Email must not be null!", groups = {OnCreate.class, OnUpdate.class})
-    @Email(message = "Email is not valid!", groups = {OnCreate.class, OnUpdate.class})
+    @NotBlank(message = "Email must not be null!",
+            groups = {OnCreate.class, OnUpdate.class})
+    @Email(message = "Email is not valid!",
+            groups = {OnCreate.class, OnUpdate.class})
     @Length(message = "Email must be less than 255 symbols long!", max = 255,
             groups = {OnCreate.class, OnUpdate.class})
     private String email;
 
-    @NotBlank(message = "Firstname must not be null!", groups = {OnCreate.class, OnUpdate.class})
-    @Length(message = "Firstname must be less than 255 symbols long!", max = 255,
+    @NotBlank(message = "Firstname must not be null!",
             groups = {OnCreate.class, OnUpdate.class})
+    @Length(message = "Firstname must be less than 255 symbols long!",
+            max = 255, groups = {OnCreate.class, OnUpdate.class})
     private String login;
 
-    @NotBlank(message = "Password must not be null!", groups = {OnCreate.class, OnPasswordUpdate.class})
+    @NotBlank(message = "Password must not be null!", groups = {OnCreate.class,
+            OnPasswordUpdate.class})
     @Length(message = "Password must be at least 8 symbols long!", min = 8,
             groups = {OnCreate.class, OnPasswordUpdate.class})
     @Length(message = "Password must be less than 255 symbols long!", max = 255,
             groups = {OnCreate.class, OnPasswordUpdate.class})
     private String password;
 
-    @NotBlank(message = "Confirmation must not be null!", groups = {OnCreate.class, OnPasswordUpdate.class})
-    @Length(message = "Confirmation must be less than 255 symbols long!", max = 255,
+    @NotBlank(message = "Confirmation must not be null!",
             groups = {OnCreate.class, OnPasswordUpdate.class})
+    @Length(message = "Confirmation must be less than 255 symbols long!",
+            max = 255, groups = {OnCreate.class, OnPasswordUpdate.class})
     private String passwordConfirmation;
 
     public UserRequestDto() {
     }
 
-    public UserRequestDto(final Long id, final String email, final String login, final String password, final String passwordConfirmation) {
+    public UserRequestDto(final Long id, final String email, final String login,
+                          final String password,
+                          final String passwordConfirmation) {
         this.id = id;
         this.email = email;
         this.login = login;
@@ -48,7 +55,8 @@ public class UserRequestDto implements Serializable {
         this.passwordConfirmation = passwordConfirmation;
     }
 
-    @AssertTrue(message = "Password and confirmation must match!", groups = {OnCreate.class, OnPasswordUpdate.class})
+    @AssertTrue(message = "Password and confirmation must match!",
+            groups = {OnCreate.class, OnPasswordUpdate.class})
     public boolean isPasswordConfirmed() {
         return password != null && password.equals(passwordConfirmation);
     }

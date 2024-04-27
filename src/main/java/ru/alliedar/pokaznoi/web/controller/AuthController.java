@@ -7,10 +7,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestMapping;
 import ru.alliedar.pokaznoi.service.AuthService;
 import ru.alliedar.pokaznoi.service.UserService;
-import ru.alliedar.pokaznoi.web.dto.auth.*;
+import ru.alliedar.pokaznoi.web.dto.auth.UserChangePasswordDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserRequestDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserLoginRequestDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserResponseDto;
+import ru.alliedar.pokaznoi.web.dto.auth.UserResetPasswordDto;
 import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
 import ru.alliedar.pokaznoi.web.mappers.UserMapper;
 
@@ -55,12 +63,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserResponseDto> loginUser(
             final @RequestBody UserLoginRequestDto userLoginRequestDto,
-            final HttpServletResponse response, final HttpServletRequest request) {
+            final HttpServletResponse response,
+            final HttpServletRequest request) {
         try {
             UserResponseDto user = authService.login(userLoginRequestDto);
             String key = UUID.randomUUID().toString();
 
-            stringRedisTemplate.opsForValue().set(key, String.valueOf(user.getId()));
+            stringRedisTemplate.opsForValue()
+                    .set(key, String.valueOf(user.getId()));
 
             Cookie cookie = new Cookie("sessionId", key);
             cookie.setPath("/");
@@ -80,7 +90,7 @@ public class AuthController {
 
         if (exists != null && exists) {
             stringRedisTemplate.delete(sessionId);
-            return ResponseEntity.ok(HttpStatus.OK);// TODO удалят куки
+            return ResponseEntity.ok(HttpStatus.OK); // TODO удалят куки
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -88,7 +98,7 @@ public class AuthController {
 
     @PostMapping("/resetPassword")
     public ResponseEntity<String> resetPassword(
-            @RequestBody UserResetPasswordDto userResetPasswordDto) {
+            final @RequestBody UserResetPasswordDto userResetPasswordDto) {
         if (authService.resetPassword(userResetPasswordDto)) {
             return ResponseEntity.ok("Пароль успешно сброшен");
         }
@@ -100,7 +110,8 @@ public class AuthController {
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(
             final @CookieValue(name = "sessionId") String sessionId,
-            final HttpServletRequest request, final HttpServletResponse response,
+            final HttpServletRequest request,
+            final HttpServletResponse response,
             final @RequestBody UserChangePasswordDto userChangePasswordDto) {
         try {
             Boolean exists = stringRedisTemplate.hasKey(sessionId);

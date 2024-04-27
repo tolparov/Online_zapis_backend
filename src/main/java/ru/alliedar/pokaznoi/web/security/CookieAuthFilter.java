@@ -21,15 +21,22 @@ public class CookieAuthFilter extends OncePerRequestFilter {
     private final StringRedisTemplate redisTemplate;
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request,
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain)
+            throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 String cookieValue = cookie.getValue();
                 if (redisTemplate.opsForValue().get(cookieValue) != null) {
                     try {
-                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(cookieValue, null, Collections.emptyList());
-                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(
+                                        cookieValue, null,
+                                        Collections.emptyList());
+                        SecurityContextHolder.getContext()
+                                .setAuthentication(authToken);
                     } catch (ResourceNotFoundException ignored) {
 
                     }

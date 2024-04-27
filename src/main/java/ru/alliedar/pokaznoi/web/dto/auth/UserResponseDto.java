@@ -18,7 +18,8 @@ public class UserResponseDto implements Serializable {
     public UserResponseDto() {
     }
 
-    public UserResponseDto(final Long id, final String email, final String login, final Role roles) {
+    public UserResponseDto(final Long id, final String email,
+                           final String login, final Role roles) {
         this.id = id;
         this.email = email;
         this.login = login;

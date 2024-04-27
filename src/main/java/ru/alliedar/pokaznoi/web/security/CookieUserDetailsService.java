@@ -17,7 +17,8 @@ public class CookieUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String login) {
         return (UserDetails) userRepository.findByUsername(login)
-                .orElseThrow(() -> new IllegalArgumentException("User with email:" + login + " not found."));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "User with email:" + login + " not found."));
     }
 
 }
