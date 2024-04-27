@@ -1,25 +1,23 @@
 package ru.alliedar.pokaznoi.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
-import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
-import ru.alliedar.pokaznoi.domain.user.Role;
-import ru.alliedar.pokaznoi.domain.user.User;
-import ru.alliedar.pokaznoi.repository.UserRepository;
-import ru.alliedar.pokaznoi.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.alliedar.pokaznoi.domain.exception.ResourceNotFoundException;
+import ru.alliedar.pokaznoi.domain.user.User;
+import ru.alliedar.pokaznoi.repository.UserRepository;
+import ru.alliedar.pokaznoi.service.UserService;
 import ru.alliedar.pokaznoi.web.dto.auth.UserRequestDto;
 import ru.alliedar.pokaznoi.web.dto.auth.UserResponseDto;
 import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +46,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Caching(put = {@CachePut(value = "UserService::getById", key = "#user.id"),
-        @CachePut(value = "UserService::getByUsername", key = "#user.username")})
+            @CachePut(value = "UserService::getByUsername", key = "#user.username")})
     public User update(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
     }
 
-//    @Override
+    //    @Override
 //    @Transactional
 ////    @Caching(cacheable = {@Cacheable(value = "UserService::getById", key = "#user.id"),
 ////            @Cacheable(value = "UserService::getByUsername", key = "#user.username")})

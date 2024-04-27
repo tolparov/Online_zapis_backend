@@ -1,14 +1,21 @@
 package ru.alliedar.pokaznoi.domain.user;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Column;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
 import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import ru.alliedar.pokaznoi.domain.task.Task;
 
 import java.io.Serializable;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")

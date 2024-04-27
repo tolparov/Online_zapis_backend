@@ -1,4 +1,5 @@
 package ru.alliedar.pokaznoi.web.controller;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -6,17 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.alliedar.pokaznoi.domain.user.User;
 import ru.alliedar.pokaznoi.service.AuthService;
 import ru.alliedar.pokaznoi.service.UserService;
 import ru.alliedar.pokaznoi.web.dto.auth.*;
-import ru.alliedar.pokaznoi.web.dto.user.UserDto;
-import ru.alliedar.pokaznoi.web.dto.validation.OnCreate;
 import ru.alliedar.pokaznoi.web.mappers.UserAuthMapper;
 import ru.alliedar.pokaznoi.web.mappers.UserMapper;
-
 
 import java.util.UUID;
 
@@ -31,7 +27,7 @@ public class AuthController {
     private final UserAuthMapper userAuthMapper;
     private final UserMapper userMapper;
 
-//    @PostMapping("/register")
+    //    @PostMapping("/register")
 //    public ResponseEntity<User> registerUser(@RequestBody UserRequestDto userRequestDto) {
 //        System.out.println("RAK");
 //        User user = userAuthMapper.mapToEntity(userRequestDto);

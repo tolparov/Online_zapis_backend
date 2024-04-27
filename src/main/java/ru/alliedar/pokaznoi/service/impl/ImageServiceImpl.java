@@ -6,7 +6,6 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.alliedar.pokaznoi.domain.exception.ImageUploadException;
@@ -19,27 +18,30 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImageServiceImpl implements ImageService{
+public class ImageServiceImpl implements ImageService {
 
     private final MinioClient minioClient;
     private final MinioProperties minioProperties;
+
     @Override
     public String upload(TaskImage image) {
         try {
             createBucket();
         } catch (Exception e) {
-            throw new ImageUploadException("Image upload failed" + e.getMessage());
+            throw new ImageUploadException("Image upload failed"
+                    + e.getMessage());
         }
         MultipartFile file = image.getFile();
-        if(file.isEmpty() || file.getOriginalFilename() == null) {
+        if (file.isEmpty() || file.getOriginalFilename() == null) {
             throw new ImageUploadException("Image must have name");
         }
         String fileName = generatedFileName(file);
         InputStream inputStream;
-        try{
+        try {
             inputStream = file.getInputStream();
-        }catch (Exception e) {
-            throw new ImageUploadException("Image upload failed" + e.getMessage());
+        } catch (Exception e) {
+            throw new ImageUploadException("Image upload failed"
+                    + e.getMessage());
         }
         saveImage(inputStream, fileName);
         return fileName;
